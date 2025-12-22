@@ -1,4 +1,4 @@
-const WebSocket = require("ws")
+import WebSocket from "ws"
 
 const pythonSocket = new WebSocket("ws://localhost:8000/ws")
 
@@ -15,4 +15,4 @@ function sendFrameToPython(frame, callback) {
     })
 }
 
-module.exports = { sendFrameToPython }
+export default { sendFrameToPython }

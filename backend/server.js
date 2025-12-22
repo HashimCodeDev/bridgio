@@ -1,13 +1,13 @@
-const express = require("express")
-const http = require("http")
-const cors = require("cors")
+import express from "express"
+import { createServer } from "http"
+import cors from "cors"
 
 const app = express()
 app.use(cors())
 
-const server = http.createServer(app)
+const server = createServer(app)
 
-require("./socket")(server)
+require("./socket").default(server)
 
 const PORT = 3000
 server.listen(PORT, () => {

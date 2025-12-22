@@ -1,7 +1,8 @@
-const { Server } = require("socket.io")
-const { sendFrameToPython } = require("./pythonClient")
+import { Server } from "socket.io"
+import pythonClient from "./pythonClient"
+const { sendFrameToPython } = pythonClient
 
-module.exports = (server) => {
+export default (server) => {
     const io = new Server(server, {
         cors: { origin: "*" }
     })

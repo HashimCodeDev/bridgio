@@ -26,7 +26,7 @@ VisionRunningMode = vision.RunningMode
 options = HandLandmarkerOptions(
     base_options=BaseOptions(model_asset_path='hand_landmarker.task'),
     running_mode=VisionRunningMode.VIDEO,
-    num_hands=1,
+    num_hands=2,
     min_hand_detection_confidence=0.6,
     min_tracking_confidence=0.6
 )
@@ -54,11 +54,20 @@ while cap.isOpened() and count < start_count + SAMPLES:
     frame_timestamp_ms += 33  # ~30fps
 
     if results.hand_landmarks:
-        landmarks = []
-        for lm in results.hand_landmarks[0]:
-            landmarks.extend([lm.x, lm.y, lm.z])
-
-        landmarks = np.array(landmarks, dtype=np.float32)
+        # Initialize landmarks array for 2 hands (126 features)
+        landmarks = np.zeros(126, dtype=np.float32)
+        
+        # Sort hands by handedness (Left=0, Right=1) for consistency
+        hand_data = list(zip(results.hand_landmarks, results.handedness))
+        hand_data.sort(key=lambda x: 0 if x[1][0].category_name == 'Left' else 1)
+        
+        # Extract landmarks for each detected hand
+        for idx, (hand_landmarks, _) in enumerate(hand_data[:2]):
+            offset = idx * 63  # 63 features per hand
+            for i, lm in enumerate(hand_landmarks):
+                landmarks[offset + i*3] = lm.x
+                landmarks[offset + i*3 + 1] = lm.y
+                landmarks[offset + i*3 + 2] = lm.z
 
         cv2.putText(frame, f"Samples: {count - start_count}/{SAMPLES}",
                     (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)

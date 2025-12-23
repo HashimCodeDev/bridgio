@@ -31,7 +31,7 @@ class SignDataset(Dataset):
 dataset = SignDataset("dataset")
 loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-model = SignClassifier(input_size=63, num_classes=len(dataset.label_map))
+model = SignClassifier(input_size=126, num_classes=len(dataset.label_map))
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 

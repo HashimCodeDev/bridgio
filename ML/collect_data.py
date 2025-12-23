@@ -5,7 +5,7 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
-SIGN_NAME = "PEACE"      # change this each time
+SIGN_NAME = "HEART"      # change this each time
 SAMPLES = 75             # samples per sign (per person)
 
 SAVE_DIR = f"dataset/{SIGN_NAME}"

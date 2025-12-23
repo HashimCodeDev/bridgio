@@ -1,4 +1,5 @@
 import os
+import json
 import numpy as np
 import torch
 import torch.nn as nn
@@ -11,7 +12,7 @@ class SignDataset(Dataset):
         self.labels = []
         self.label_map = {}
 
-        for idx, label in enumerate(os.listdir(root_dir)):
+        for idx, label in enumerate(sorted(os.listdir(root_dir))):
             self.label_map[idx] = label
             for file in os.listdir(os.path.join(root_dir, label)):
                 self.samples.append(
@@ -19,8 +20,8 @@ class SignDataset(Dataset):
                 )
                 self.labels.append(idx)
 
-        self.samples = torch.tensor(self.samples, dtype=torch.float32)
-        self.labels = torch.tensor(self.labels)
+        self.samples = torch.tensor(np.array(self.samples), dtype=torch.float32)
+        self.labels = torch.tensor(np.array(self.labels))
 
     def __len__(self):
         return len(self.labels)
@@ -49,4 +50,9 @@ for epoch in range(40):
 
 torch.save(model.state_dict(), "model.pt")
 
+# Save label mapping
+with open("labels.json", "w") as f:
+    json.dump({str(k): v for k, v in dataset.label_map.items()}, f, indent=4)
+
 print("Training complete. Model saved.")
+print(f"Label mapping: {dataset.label_map}")

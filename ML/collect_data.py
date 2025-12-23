@@ -11,6 +11,14 @@ SAMPLES = 250            # samples per sign
 SAVE_DIR = f"dataset/{SIGN_NAME}"
 os.makedirs(SAVE_DIR, exist_ok=True)
 
+# Find the highest existing sample number
+existing_files = [f for f in os.listdir(SAVE_DIR) if f.endswith('.npy')]
+if existing_files:
+    existing_numbers = [int(f.split('.')[0]) for f in existing_files]
+    start_count = max(existing_numbers) + 1
+else:
+    start_count = 0
+
 BaseOptions = python.BaseOptions
 HandLandmarker = vision.HandLandmarker
 HandLandmarkerOptions = vision.HandLandmarkerOptions
@@ -28,12 +36,14 @@ hands = HandLandmarker.create_from_options(options)
 frame_timestamp_ms = 0
 
 cap = cv2.VideoCapture(0)
-count = 0
+count = start_count
 landmarks = None
 
 print(f"Collecting data for: {SIGN_NAME}")
+print(f"Starting from sample {start_count}, collecting {SAMPLES} more samples")
+print(f"Will save samples {start_count} to {start_count + SAMPLES - 1}")
 
-while cap.isOpened() and count < SAMPLES:
+while cap.isOpened() and count < start_count + SAMPLES:
     ret, frame = cap.read()
     if not ret:
         break
@@ -51,7 +61,7 @@ while cap.isOpened() and count < SAMPLES:
 
         landmarks = np.array(landmarks, dtype=np.float32)
 
-        cv2.putText(frame, f"Samples: {count}/{SAMPLES}",
+        cv2.putText(frame, f"Samples: {count - start_count}/{SAMPLES}",
                     (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
 
     cv2.imshow("Collecting", frame)

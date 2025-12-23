@@ -7,7 +7,7 @@ device = torch.device("cpu")
 with open("labels.json") as f:
     LABELS = json.load(f)
 
-model = SignClassifier(input_size=63, num_classes=len(LABELS))
+model = SignClassifier(input_size=126, num_classes=len(LABELS))
 model.load_state_dict(torch.load("model.pt", map_location=device))
 model.eval()
 

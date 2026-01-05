@@ -32,9 +32,12 @@ export default function CameraStream() {
     }, [])
 
     return (
-        <>
-            <video ref={videoRef} autoPlay muted />
+        <div className="camera-stream">
+            <h2>Camera Feed</h2>
+            <div className="video-wrapper">
+                <video ref={videoRef} autoPlay muted className="camera-video" />
+            </div>
             <canvas ref={canvasRef} style={{ display: "none" }} />
-        </>
+        </div>
     )
 }

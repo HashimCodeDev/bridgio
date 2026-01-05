@@ -14,8 +14,11 @@ export default function OutputBox() {
     }, [])
 
     return (
-        <div style={{ fontSize: "2rem", marginTop: "20px" }}>
-            {text}
+        <div className="output-box">
+            <h3>Translation Output</h3>
+            <div className="output-text">
+                {text || "Waiting for sign language input..."}
+            </div>
         </div>
     )
 }

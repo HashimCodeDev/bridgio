@@ -1,5 +1,5 @@
 import { Server } from "socket.io"
-import pythonClient from "./pythonClient"
+import pythonClient from "./pythonClient.js"
 const { sendFrameToPython } = pythonClient
 
 export default (server) => {

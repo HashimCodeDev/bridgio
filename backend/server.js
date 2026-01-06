@@ -1,13 +1,14 @@
 import express from "express"
 import { createServer } from "http"
 import cors from "cors"
+import socket from "./socket"
 
 const app = express()
 app.use(cors())
 
 const server = createServer(app)
 
-require("./socket").default(server)
+socket(server)
 
 const PORT = 3000
 server.listen(PORT, () => {

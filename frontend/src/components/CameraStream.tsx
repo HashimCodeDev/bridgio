@@ -1,12 +1,16 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import socket from "../socket"
 
 export default function CameraStream() {
     const videoRef = useRef<HTMLVideoElement>(null)
     const canvasRef = useRef<HTMLCanvasElement>(null)
+    const streamRef = useRef<MediaStream | null>(null)
+    const lastPredictionRef = useRef<string>("")
+    const [prediction, setPrediction] = useState<string>("")
 
     useEffect(() => {
         navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+            streamRef.current = stream
             if (videoRef.current) {
                 videoRef.current.srcObject = stream
             }
@@ -28,7 +32,22 @@ export default function CameraStream() {
             socket.emit("frame", frame)
         }, 100) // 10 FPS
 
-        return () => clearInterval(interval)
+        const handlePrediction = (data: { text: string }) => {
+            if (data.text !== lastPredictionRef.current) {
+                setPrediction(data.text)
+                lastPredictionRef.current = data.text
+            }
+        }
+
+        socket.on("prediction", handlePrediction)
+
+        return () => {
+            clearInterval(interval)
+            socket.off("prediction", handlePrediction)
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(track => track.stop())
+            }
+        }
     }, [])
 
     return (
@@ -38,6 +57,7 @@ export default function CameraStream() {
                 <video ref={videoRef} autoPlay muted className="camera-video" />
             </div>
             <canvas ref={canvasRef} style={{ display: "none" }} />
+            <h3>{prediction}</h3>
         </div>
     )
 }

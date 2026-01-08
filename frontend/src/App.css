@@ -148,19 +148,26 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 3rem 2rem;
+  padding: 2rem;
   overflow-y: auto;
   position: relative;
   z-index: 1;
+  min-height: 0;
 }
 
 .main-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-  max-width: 1000px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1400px;
   width: 100%;
   margin: 0 auto;
+  height: 100%;
+}
+
+.camera-container,
+.output-container {
+  height: fit-content;
 }
 
 /* ===== CAMERA SECTION ===== */
@@ -587,6 +594,11 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
+  .main-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
   .app-header {
     flex-direction: column;
     align-items: flex-start;
@@ -600,10 +612,6 @@
 
   .app-main {
     padding: 1.5rem;
-  }
-
-  .main-content {
-    gap: 1.5rem;
   }
 
   .camera-container,

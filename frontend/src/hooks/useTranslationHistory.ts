@@ -8,15 +8,28 @@ export function useTranslationHistory() {
     const addTranslation = useCallback((word: string) => {
         if (!word || word.trim() === '') return
 
-        const newEntry: TranslationEntry = {
-            id: `${Date.now()}-${Math.random()}`,
-            timestamp: new Date(),
-            word: word.trim(),
-            spoken: false
-        }
+        const normalizedWord = word.trim()
 
-        setHistory(prev => [...prev, newEntry])
-        return newEntry.id
+        // Prevent adding consecutive duplicates to history
+        setHistory(prev => {
+            const lastEntry = prev[prev.length - 1]
+            if (lastEntry && lastEntry.word === normalizedWord) {
+                // Don't add duplicate, return existing history
+                return prev
+            }
+
+            const newEntry: TranslationEntry = {
+                id: `${Date.now()}-${Math.random()}`,
+                timestamp: new Date(),
+                word: normalizedWord,
+                spoken: false
+            }
+
+            return [...prev, newEntry]
+        })
+
+        // Return the ID even if not added (for consistency)
+        return `${Date.now()}-${Math.random()}`
     }, [])
 
     const markAsSpoken = useCallback((id: string) => {

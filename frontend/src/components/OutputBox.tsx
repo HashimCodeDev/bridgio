@@ -27,20 +27,16 @@ export default function OutputBox() {
 
             setCurrentText(word)
 
-            // Add to history
-            const entryId = addTranslation(word)
-
-            // Speak only if it's a new word
+            // Only speak and add to history if it's a new word
             if (shouldSpeak(word)) {
-                speak(word, () => {
-                    if (entryId) {
-                        markAsSpoken(entryId)
-                    }
-                })
+                // Add to history (will only add if not a consecutive duplicate)
+                addTranslation(word)
+
+                // Speak the word with text-to-speech
+                speak(word)
+
+                // Update the last spoken word
                 updateLastSpoken(word)
-            } else if (entryId) {
-                // Mark as spoken if it matches the last word
-                markAsSpoken(entryId)
             }
         }
 
@@ -49,7 +45,7 @@ export default function OutputBox() {
         return () => {
             socket.off("prediction", handlePrediction)
         }
-    }, [speak, addTranslation, markAsSpoken, shouldSpeak, updateLastSpoken])
+    }, [speak, addTranslation, shouldSpeak, updateLastSpoken])
 
     return (
         <div className="output-section">

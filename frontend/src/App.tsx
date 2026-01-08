@@ -65,11 +65,13 @@ export default function App() {
       </header>
 
       <main className="app-main">
-        <div className="camera-container">
-          <CameraStream />
-        </div>
-        <div className="output-container">
-          <OutputBox />
+        <div className="main-content">
+          <div className="camera-container">
+            <CameraStream />
+          </div>
+          <div className="output-container">
+            <OutputBox />
+          </div>
         </div>
       </main>
 

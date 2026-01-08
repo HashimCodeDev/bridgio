@@ -1,53 +1,120 @@
-# React + TypeScript + Vite
+# Frontend - Sign Language Translator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript UI for real-time sign language translation.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 📹 **Webcam Capture** - Real-time video feed
+- 💬 **Translation Display** - Current sign + history
+- 🔊 **Text-to-Speech** - Auto-speak with deduplication
+- 🎨 **Modern UI** - Dark/light themes, responsive
+- ♿ **Accessible** - WCAG compliant, keyboard navigation
+- 🔌 **Live Status** - Connection indicators
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19 + TypeScript
+- Vite (build tool)
+- Socket.IO Client
+- Web Speech API
+- CSS3 (no UI library dependencies)
 
-## Expanding the ESLint configuration
+## Development
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Install dependencies
+pnpm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# Start dev server (port 5173)
+pnpm dev
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Build for production
+pnpm build
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Preview production build
+pnpm preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Environment
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
+The frontend connects to the backend at `http://localhost:3000` by default.
+
+To change this, edit [src/socket.ts](src/socket.ts):
+```typescript
+const socket = io("http://your-backend-url")
+```
+
+## Component Structure
+
+```
+src/
+├── components/
+│   ├── CameraStream.tsx       # Webcam + frame capture
+│   ├── OutputBox.tsx          # Current translation
+│   ├── HistoryPanel.tsx       # Translation history
+│   ├── StatusIndicator.tsx    # Connection status
+│   └── ThemeToggle.tsx        # Dark/light mode
+├── hooks/
+│   ├── useTranslationHistory.ts  # History state management
+│   ├── useTextToSpeech.ts        # TTS with deduplication
+│   └── useTheme.ts               # Theme persistence
+├── App.tsx                    # Main component
+├── socket.ts                  # Socket.IO client
+└── types.ts                   # TypeScript interfaces
+```
+
+## Key Features Implementation
+
+### History Management
+- Stores all translations with timestamps
+- Prevents duplicate speech output
+- Scrollable, chat-style UI
+- Clear history button
+
+### Accessibility
+- Semantic HTML
+- ARIA labels
+- Keyboard navigation
+- Focus indicators
+- Reduced motion support
+- High contrast colors
+
+### Performance
+- 10 FPS frame capture (configurable)
+- Efficient re-renders with React hooks
+- Debounced speech synthesis
+- Canvas-based image capture
+
+## Browser Support
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+Requires:
+- WebRTC (camera access)
+- Canvas API
+- WebSocket support
+- Web Speech API
+
+## Troubleshooting
+
+**Camera permission denied:**
+- Check browser settings
+- Use HTTPS in production
+- Try different browser
+
+**No connection:**
+- Ensure backend is running on port 3000
+- Check browser console for errors
+- Verify CORS settings
+
+**No speech output:**
+- Check browser audio permissions
+- Verify Web Speech API support
+- Try different voice in browser settings
+
 import reactDom from 'eslint-plugin-react-dom'
 
 export default defineConfig([

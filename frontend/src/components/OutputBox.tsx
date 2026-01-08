@@ -52,7 +52,7 @@ export default function OutputBox() {
             <div className="output-box">
                 <h3>Current Translation</h3>
                 <div className="output-text">
-                    {currentText || "Waiting for sign language input..."}
+                    {currentText || ""}
                 </div>
             </div>
             <HistoryPanel history={history} onClear={clearHistory} />

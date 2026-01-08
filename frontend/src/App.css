@@ -153,6 +153,8 @@
   overflow: hidden;
   box-shadow: 0 4px 20px var(--shadow);
   background: #000;
+  margin: 0 auto;
+  max-width: 100%;
 }
 
 .camera-video {
@@ -160,6 +162,7 @@
   width: 100%;
   height: auto;
   aspect-ratio: 4/3;
+  margin: 0 auto;
 }
 
 .recording-indicator {

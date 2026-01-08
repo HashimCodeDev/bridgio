@@ -14,6 +14,7 @@ export default function CameraStream({ onStreamReady }: CameraStreamProps) {
 
     useEffect(() => {
         let interval: NodeJS.Timeout
+        let isMounted = true
 
         const startCamera = async () => {
             try {
@@ -25,12 +26,29 @@ export default function CameraStream({ onStreamReady }: CameraStreamProps) {
                     }
                 })
 
+                if (!isMounted) {
+                    // Component unmounted during camera setup
+                    stream.getTracks().forEach(track => track.stop())
+                    return
+                }
+
                 streamRef.current = stream
 
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream
-                    await videoRef.current.play()
+
+                    // Handle play() promise to avoid interruption errors
+                    try {
+                        await videoRef.current.play()
+                    } catch (playError) {
+                        // Ignore AbortError when component unmounts
+                        if (playError instanceof Error && playError.name !== 'AbortError') {
+                            console.warn('Video play interrupted:', playError.message)
+                        }
+                    }
                 }
+
+                if (!isMounted) return
 
                 setIsStreaming(true)
                 onStreamReady?.(true)
@@ -56,6 +74,8 @@ export default function CameraStream({ onStreamReady }: CameraStreamProps) {
                 }, 100)
 
             } catch (err) {
+                if (!isMounted) return
+
                 const errorMsg = err instanceof Error ? err.message : 'Camera access denied'
                 setError(errorMsg)
                 onStreamReady?.(false)
@@ -66,7 +86,18 @@ export default function CameraStream({ onStreamReady }: CameraStreamProps) {
         startCamera()
 
         return () => {
-            if (interval) clearInterval(interval)
+            isMounted = false
+
+            if (interval) {
+                clearInterval(interval)
+            }
+
+            // Pause video before removing
+            if (videoRef.current) {
+                videoRef.current.pause()
+                videoRef.current.srcObject = null
+            }
+
             if (streamRef.current) {
                 streamRef.current.getTracks().forEach(track => track.stop())
             }
@@ -85,7 +116,6 @@ export default function CameraStream({ onStreamReady }: CameraStreamProps) {
                 <div className="video-wrapper">
                     <video
                         ref={videoRef}
-                        autoPlay
                         muted
                         playsInline
                         className="camera-video"
